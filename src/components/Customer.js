@@ -14,14 +14,36 @@ class Customer extends React.Component {
         // 전달받은 프로퍼티를 사용할 때 this.props.----를 사용한 것임.
         return (
             <div>
-                <h2>{this.props.name}</h2>
+                <CustomerProfile id={this.props.id} name={this.props.name} image={this.props.image} />
+                <CustomerInfo birthday={this.props.birthday} gender={this.props.gender} job={this.props.job} />
+            </div>
+        );
+    }
+    // Customer라는 컴포넌트의 작성이 완료되었다. App.js에서 이제 이 Customer 컴포넌트를 쓰자.
+}
+
+// 하나의 컴포넌트를 추가로 정의하자
+class CustomerProfile extends React.Component {
+    render() {
+        return (
+            <div>
+                <img src={this.props.image} alt="profile" />
+                <h2>{this.props.name}({this.props.id})</h2>
+            </div>
+        );
+    }
+}
+
+class CustomerInfo extends React.Component {
+    render() {
+        return (
+            <div>
                 <p>{this.props.birthday}</p>
                 <p>{this.props.gender}</p>
                 <p>{this.props.job}</p>
             </div>
         );
     }
-    // Customer라는 컴포넌트의 작성이 완료되었다. App.js에서 이제 이 Customer 컴포넌트를 쓰자.
 }
 
 export default Customer; // 다른 라이브러리가 Customer 라이브러리를 쓸수 있게 내보내는 것.
