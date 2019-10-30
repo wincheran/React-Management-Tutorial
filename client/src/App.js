@@ -20,33 +20,26 @@ const styles = theme => ({
   }
 });
 
-const customers = [{
-  'id': 1,
-  'image': 'https://placeimg.com/64/64/any',
-  'name': '이순신',
-  'birthday': '961222',
-  'gender': '남자',
-  'job': '대학생'
-},
-{
-  'id': 2,
-  'image': 'https://placeimg.com/64/64/2',
-  'name': '박혁거세',
-  'birthday': '901022',
-  'gender': '남자',
-  'job': '대학생'
-},
-{
-  'id': 3,
-  'image': 'https://placeimg.com/64/64/3',
-  'name': '홍길동',
-  'birthday': '911121',
-  'gender': '남자',
-  'job': '대학생'
-}
-];
-
 class App extends Component {
+
+  state = {
+    customers: ""
+  };
+
+  componentDidMount() {
+    this.callApi()
+      .then(res => this.setState({customers: res})) // 여기서 res는 아래 callApi에서 return 된 body임
+      .catch(err => console.log(err)); // error가 발생하면 콘솔로그 찍어줌.
+  };
+
+  callApi = async () => {
+    const response = await fetch('/api/customers'); // localhost의 api 경로에 접근해서
+    const body = await response.json(); // await은 아마.. success 되면 데이터가 들어가는 구조임
+    // 정리하면, 위의 경로로 가서 데이터를 가져오고 그 데이터를 json 으로 변경해서 body 변수에 담는것임.
+
+    return body;
+  };
+
   render() {
     const { classes } = this.props; // 변수 생성하고, 위에서 만든 스타일이 적용되게 할 예정.
 
@@ -65,8 +58,7 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {
-              customers.map(oCustomerInfo => { // 여기서 aCustomerInfo는 Customers 배열의 원소 하나하나를 의미
+            { this.state.customers ? this.state.customers.map(oCustomerInfo => { // 여기서 aCustomerInfo는 Customers 배열의 원소 하나하나를 의미
                 return (
                   <Customer
                     key={oCustomerInfo.id} // 메서드 map을 사용하려면 각 원소를 구분할 수 있는 'key를 반드시 넣어줘야 함'
@@ -79,7 +71,7 @@ class App extends Component {
                   />
 
                 );
-              })
+              }) : ""
             }
           </TableBody>
         </Table>
