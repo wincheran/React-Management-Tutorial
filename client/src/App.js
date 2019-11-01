@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles'; // 스타일 라이브러리 호출
 
 const styles = theme => ({
@@ -17,16 +18,21 @@ const styles = theme => ({
   },
   table: {
     minWidth: 1080
+  },
+  progress: {
+    margin: theme.spacing.unit * 2
   }
 });
 
 class App extends Component {
 
   state = {
-    customers: ""
+    customers: "",
+    completed: 0
   };
 
   componentDidMount() {
+    this.timer = setInterval(this.progress, 20); // 0.02초 단위로 계속해서 호출
     this.callApi()
       .then(res => this.setState({customers: res})) // 여기서 res는 아래 callApi에서 return 된 body임
       .catch(err => console.log(err)); // error가 발생하면 콘솔로그 찍어줌.
@@ -39,6 +45,11 @@ class App extends Component {
 
     return body;
   };
+
+  progress = () => {
+    const { completed } = this.state; // 상태 변수를 가져와서..
+    this.setState({ completed: completed >= 100 ? 0 : completed + 1});
+  }
 
   render() {
     const { classes } = this.props; // 변수 생성하고, 위에서 만든 스타일이 적용되게 할 예정.
@@ -71,7 +82,12 @@ class App extends Component {
                   />
 
                 );
-              }) : ""
+              }) : 
+              <TableRow>
+                <TableCell colspan="6" align="center">
+                  <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed} />
+                </TableCell>
+              </TableRow>
             }
           </TableBody>
         </Table>
