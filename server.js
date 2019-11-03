@@ -22,13 +22,34 @@ connection.connect();
 app.get('/api/customers', (req, res) => {
     connection.query(
         "SELECT * FROM CUSTOMER",
-        (err, rows, fields) => {
+        (err, rows, fields) => { // SELECT 된 데이터는 rows 가 처리할수 있다.
             res.send(rows);
         }
     );
     // query(param1, param2)
     // param1: 실제로 동작할 쿼리
     // param2: callback function.
+});
+
+const multer = require('multer');
+const upload = multer({dest: './upload'}); // root/upload 폴더를 사용자의 파일이 업로드가 되는 공간으로 지정!!
+
+// upload란 이름의 폴더를 유저가 접근해서 확인하기 위해, express.static을 이용해 업로드 폴더를 공유한다.
+app.use('/image', express.static('./upload')); // 사용자는 도메인/image 로 접근하는데, 실제로는 실제 서버의 업로드 폴더에 접근하는?
+
+app.post('/api/customers', upload.single('image'), (req, res) => {
+    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, ?)';
+    let image = '/image/' + req.file.filename; // image는 이미 서버에 있다고 가정하고 유저의 upload 폴더에 담아두므로.. 파일 경로만을 db에 넣도록 한다.
+    let name = req.body.name;
+    let birthday = req.body.birthday;
+    let gender = req.body.gender;
+    let job = req.body.job;
+    let params = [image, name, birthday, gender, job]; // sql과 binding 될 배열
+    connection.query(sql, params,
+        (err, rows, fields) => {
+            // err에는 오류가 발생한 경우에 대한 정보가 담김.
+            res.send(rows);
+        })
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
