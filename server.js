@@ -21,7 +21,7 @@ connection.connect();
 
 app.get('/api/customers', (req, res) => {
     connection.query(
-        "SELECT * FROM CUSTOMER",
+        "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
         (err, rows, fields) => { // SELECT 된 데이터는 rows 가 처리할수 있다.
             res.send(rows);
         }
@@ -32,13 +32,13 @@ app.get('/api/customers', (req, res) => {
 });
 
 const multer = require('multer');
-const upload = multer({dest: './upload'}); // root/upload 폴더를 사용자의 파일이 업로드가 되는 공간으로 지정!!
+const upload = multer({ dest: './upload' }); // root/upload 폴더를 사용자의 파일이 업로드가 되는 공간으로 지정!!
 
 // upload란 이름의 폴더를 유저가 접근해서 확인하기 위해, express.static을 이용해 업로드 폴더를 공유한다.
 app.use('/image', express.static('./upload')); // 사용자는 도메인/image 로 접근하는데, 실제로는 실제 서버의 업로드 폴더에 접근하는?
 
 app.post('/api/customers', upload.single('image'), (req, res) => {
-    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, ?)';
+    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, ?, now(), 0)';
     let image = '/image/' + req.file.filename; // image는 이미 서버에 있다고 가정하고 유저의 upload 폴더에 담아두므로.. 파일 경로만을 db에 넣도록 한다.
     let name = req.body.name;
     let birthday = req.body.birthday;
@@ -51,6 +51,17 @@ app.post('/api/customers', upload.single('image'), (req, res) => {
             res.send(rows);
         })
 });
+
+// delete method로 접속을 한 경우.
+app.delete('/api/customers/:id', (req, res) => {
+    let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?';
+    let params = [req.params.id];
+    connection.query(szl, params,
+        (err, rows, fields) => {
+            res.send(rows);
+        }
+    );
+})
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

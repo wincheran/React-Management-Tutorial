@@ -1,6 +1,7 @@
 import React from 'react'; // 리액트 라이브러리를 불러올 수 있게 하는 것.
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CustomerDelete from './CustomerDelete';
 
 // Customer 클래스를 정의하는데,
 // Customer 클래스는 리액트의 컴포넌트로 작성이 된 클래스임을 선언한다.
@@ -22,6 +23,7 @@ class Customer extends React.Component {
                 <TableCell>{this.props.birthday}</TableCell>
                 <TableCell>{this.props.gender}</TableCell>
                 <TableCell>{this.props.job}</TableCell>
+                <TableCell><CustomerDelete stateRefresh={this.props.stateRefresh} id={this.props.id}/></TableCell>
             </TableRow>
         )
     }

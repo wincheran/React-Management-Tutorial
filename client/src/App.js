@@ -83,12 +83,14 @@ class App extends Component {
                 <TableCell>생년월일</TableCell>
                 <TableCell>성별</TableCell>
                 <TableCell>직업</TableCell>
+                <TableCell>설정</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {this.state.customers ? this.state.customers.map(oCustomerInfo => { // 여기서 aCustomerInfo는 Customers 배열의 원소 하나하나를 의미
                 return (
                   <Customer
+                    stateRefresh={this.stateRefresh}
                     key={oCustomerInfo.id} // 메서드 map을 사용하려면 각 원소를 구분할 수 있는 'key를 반드시 넣어줘야 함'
                     id={oCustomerInfo.id}
                     image={oCustomerInfo.image}
